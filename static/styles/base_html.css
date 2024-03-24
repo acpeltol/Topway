@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+}
+
+h1 {
+    color: rgb(234, 0, 255);
+}
+
+.header {
+    background-color: rgb(5, 38, 82);
+    height: 50px;
+}
