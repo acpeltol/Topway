@@ -13,7 +13,7 @@
 
             <h1>Top Way</h1>
         </div> 
-        <p><a href="{{url_for('page1')}}">My first paragraph.</a></p>
+        <p><a href="{{url_for('register')}}">My first paragraph.</a></p>
               
         <p>Username</p>
         
@@ -27,11 +27,17 @@
 
         <input type="submit" value="Log in">
 
-        </form>  
+        </form>
+        
+        <p>{{texto}}</p>
 
-        <form action="/page1"> 
+        <form action="/register"> 
     
             <input type="submit" value="Sign up">
+
+        </form>
+
+
 
     </body>
 </html>

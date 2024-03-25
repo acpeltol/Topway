@@ -9,21 +9,52 @@ db = SQLAlchemy(app)
 
 # Routes to different pages!
 
+# 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
+
+
+def new_user_check(uname, upass):
+    return
 
 #Main page
 
 @app.route("/", methods = ["POST", "GET"])
 def index():
+
+    texto = ""
      
+    #Checks if username and password is correct 
+
     if request.method == "POST":
+
+        u_id = db.session.execute(text(f'''SELECT id FROM users
+                                   WHERE uname = '{request.form["uname"]}' AND upass = '{request.form["upass"]}' ''')).fetchall()
+            
+        print(u_id)
+
         print(request.form["uname"])
+
         print(request.form["upass"])
 
-    print(db.session.execute(text('SELECT * FROM hulio')).fetchall())
-    return render_template("base.html")
+        if len(u_id) == 1:
+            return "Hello kioto"
+    
+        else:
+            texto = "Username or paswors is wrong"
 
-@app.route("/page1")
-def page1():
+    print(db.session.execute(text('SELECT * FROM hulio')).fetchall())
+    return render_template("base.html", texto = texto)
+
+
+# REGISTER PAGE
+
+@app.route("/register", methods = ["POST", "GET"])
+def register():
+
+    if request.method == "POST":
+        
+        result = new_user_check(request.form["runame"],request.form["rupass"])
+        
+        #db.session.execute(text('SELECT * FROM hulio'))
 
     return render_template("register_page.html")
 

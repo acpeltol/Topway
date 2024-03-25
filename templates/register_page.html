@@ -10,12 +10,26 @@
 
 </head>
 
-
-
 <body>
 
 <h1><a href="{{url_for('index')}}">Hulio pidoros</a></h1>
+
+
 <p>My first paragraph.</p>
+
+        <p>Create username</p>
+        
+        <form action="/register" method="POST"> 
+
+        <input type="text" id="runame" name="runame">
+
+        <p>Create password</p>
+
+        <input type="text" id="rupass" name="rupass">
+
+        <input type="submit" value="Sign up">
+
+        </form>  
 
 </body>
 </html>
