@@ -2,8 +2,9 @@ body {
     margin: 0;
 }
 
-h1 {
+.header h1{
     color: rgb(234, 0, 255);
+    margin-left: 25;
 }
 
 .header {

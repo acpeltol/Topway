@@ -11,9 +11,27 @@
     <body>
         <div class="header">
 
-            <h1>La websaiot</h1>
+            <h1>Top Way</h1>
         </div> 
         <p><a href="{{url_for('page1')}}">My first paragraph.</a></p>
+              
+        <p>Username</p>
+        
+        <form action="/" method="POST"> 
+
+        <input type="text" id="uname" name="uname">
+
+        <p>Password</p>
+
+        <input type="text" id="upass" name="upass">
+
+        <input type="submit" value="Log in">
+
+        </form>  
+
+        <form action="/page1"> 
+    
+            <input type="submit" value="Sign up">
 
     </body>
 </html>
