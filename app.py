@@ -9,11 +9,15 @@ db = SQLAlchemy(app)
 
 # Routes to different pages!
 
-# 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
-
+# Checks if new users username exists
 
 def new_user_check(uname, upass):
-    return
+
+
+
+
+
+    return 
 
 #Main page
 
@@ -29,11 +33,11 @@ def index():
         u_id = db.session.execute(text(f'''SELECT id FROM users
                                    WHERE uname = '{request.form["uname"]}' AND upass = '{request.form["upass"]}' ''')).fetchall()
             
-        print(u_id)
+        #print(u_id)
 
-        print(request.form["uname"])
+        #print(request.form["uname"])
 
-        print(request.form["upass"])
+        #print(request.form["upass"])
 
         if len(u_id) == 1:
             return "Hello kioto"
@@ -43,7 +47,6 @@ def index():
 
     print(db.session.execute(text('SELECT * FROM hulio')).fetchall())
     return render_template("base.html", texto = texto)
-
 
 # REGISTER PAGE
 
