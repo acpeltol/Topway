@@ -13,11 +13,18 @@ db = SQLAlchemy(app)
 
 def new_user_check(uname, upass):
 
+    if uname == "" or upass == "":
+        return "Wrog type of name or password"
+    
+    u_id = db.session.execute(text(f'''SELECT id FROM users WHERE uname = '{uname}' ''')).fetchall()
+    
+    print(u_id)
+
+    if len(u_id) == 1:        
+        return "Username alredy exists"
 
 
-
-
-    return 
+    return "gato"
 
 #Main page
 
@@ -53,13 +60,21 @@ def index():
 @app.route("/register", methods = ["POST", "GET"])
 def register():
 
+    texto_register = ""
+
     if request.method == "POST":
         
-        result = new_user_check(request.form["runame"],request.form["rupass"])
-        
-        #db.session.execute(text('SELECT * FROM hulio'))
+        texto_register = new_user_check(request.form["runame"],request.form["rupass"])
 
-    return render_template("register_page.html")
+        if texto_register == "gato":
+
+            db.session.execute(text(f'''INSERT INTO users (uname, upass) VALUES ('{request.form["runame"]}', '{request.form["rupass"]}')'''))
+            db.session.commit()
+
+            print("hulio")
+
+
+    return render_template("register_page.html", texto_register = texto_register)
 
 @app.route("/page2")
 def page2():
