@@ -1,0 +1,59 @@
+<html>
+
+<head>
+
+<title>Topway</title>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/register_page.css')}}">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+<h1><a href="{{url_for('index')}}">Welcome!</a></h1>
+
+<p>Before we start we'd like to know some more information about yourself</p>
+        
+<form action="/get_information" method="POST"> 
+
+        <p>What is your name</p>
+
+        <label for="Name">Name</label>
+
+        <input type="text" id="name" name="name">
+
+        <p>What is your last name</p>
+
+        <label for="lname">Lastname</label>
+
+        <input type="text" id="lname" name="lname">
+
+        <p>What is your birthday</p>
+
+        <label for="birthday">Birthday</label>
+
+        <input type="date" id="birthday" name="birthday" value="">
+
+        <p>What is your gneder</p>
+
+                <input type="radio" id="man" name="gender" value="Man" checked>
+                <label for="man">Man</label>
+
+                <input type="radio" id="woman" name="gender" value="Woman">
+                <label for="woman">Woman</label>
+
+                <input type="radio" id="other" name="gender" value="Other">
+                <label for="other">Other</label>        
+
+        <input type="submit" value="submit">
+
+</form>
+        
+        <p style="color: red">{{fail_reason}}</p>
+
+</body>
+</html>

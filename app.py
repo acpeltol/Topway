@@ -3,6 +3,7 @@ from flask import render_template, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
+import datetime
 
 app = Flask(__name__)
 
@@ -42,6 +43,35 @@ def new_user_check(uname, upass):
 
     return 1
 
+# Checks if new user's information was put right
+
+def new_users_information_check(fname,lname,bday):
+
+    date = datetime.datetime.now()
+
+    print(bday[8:10])
+
+    if fname == "":
+        return "Write your name"
+    
+    if lname == "":
+        return "Write your lastname"
+    
+    if bday == "":
+        return "Please give us your birthday"
+    
+    if int(bday[0:4]) > date.year:
+        return "This year hasn't comen yet"
+    
+    if int(bday[0:4]) == date.year and int(bday[5:7]) > date.month:
+        return "This month of this year hasn't commen yet"
+    
+    if int(bday[0:4]) == date.year and int(bday[5:7]) == date.month and int(bday[8:10]) > date.day:
+        return "This day of this month hasn't commen yet"
+
+    return 1
+
+
 #Routes to different pages
 
 #Opening page
@@ -56,9 +86,7 @@ def index():
     if request.method == "POST":
 
         u_id = db.session.execute(text(f'''SELECT id,upass  FROM users
-                                   WHERE uname = '{request.form["uname"]}' ''')).fetchall()
-
-        print(u_id)            
+                                   WHERE uname = '{request.form["uname"]}' ''')).fetchall()         
 
         if len(u_id) != 1:            
             
@@ -70,11 +98,18 @@ def index():
             user = request.form["uname"]
             session["user"] = user
 
-            return render_template("main_page.html", texto = session["user"])
+            u_id = db.session.execute(text(f'''  
+                    SELECT * FROM users_information WHERE user_name = '{session["user"]}' ''')).fetchall()
+            
+            if len(u_id) == 1:
+                return render_template("main_page.html", texto = session["user"])
+
+            return render_template("get_information.html")
         
         else:
 
             texto = "Password is wrong"
+
             return render_template("base.html", texto = texto)
 
     return render_template("base.html", texto = texto)
@@ -89,6 +124,8 @@ def register():
     # If user writes down the name and the password it will go next statement
 
     if request.method == "POST":
+
+        #Goes to function which checks if username and password were put right
         
         texto_register = new_user_check(request.form["runame"],request.form["rupass"])
 
@@ -100,16 +137,38 @@ def register():
             user = request.form["runame"]
             session["user"] = user
 
-            return render_template("main_page.html",texto = session["user"])
-
+            return render_template("get_information.html")
 
 
     return render_template("register_page.html", texto_register = texto_register)
 
-@app.route("/main_pgae", methods = ["POST", "GET"])
+@app.route("/main_page", methods = ["POST", "GET"])
+
 def main_page():
-    return 
+
+    return render_template("main_page.html",texto = session["user"])
+
+
 
 @app.route("/get_information", methods = ["POST", "GET"])
 def get_information():
-    return render_template("register_page.html")
+
+    texten = ""
+
+    if request.method == "POST":
+
+        #print(request.form["name"],request.form["lname"],request.form["birthday"],request.form["gender"])
+        #print(type(request.form["name"]),type(request.form["lname"]),type(request.form["birthday"]),type(request.form["gender"]))
+
+        chekced_info = new_users_information_check(request.form["name"],request.form["lname"],request.form["birthday"])
+
+        if chekced_info != 1:
+            texten = chekced_info
+        else:
+
+            db.session.execute(text(f'''INSERT INTO users_information (user_name, birthday, gender, first_name, last_name) VALUES ('{session["user"]}', '{request.form["birthday"]}','{request.form["gender"]}','{request.form["name"]}','{request.form["lname"]}')'''))
+            db.session.commit()
+
+            return render_template("main_page.html",texto = session["user"])
+
+    return render_template("get_information.html", fail_reason = texten)
