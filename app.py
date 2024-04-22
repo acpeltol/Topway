@@ -16,7 +16,12 @@ db = SQLAlchemy(app)
 
 # Checks if new users username exists and if it has correct type password
 
-def new_user_check(uname, upass):
+def new_user_check(uname, upass, upass2):
+
+    # If user didn't put both passwords right then it will inform about it
+
+    if upass != upass2:
+        return "You didn't reapeat your password right"
 
     # If user types nothing then it rejects sign up
     
@@ -40,7 +45,6 @@ def new_user_check(uname, upass):
     if len(u_id) == 1:        
         return "Username alredy exists"
 
-
     return 1
 
 # Checks if new user's information was put right
@@ -48,8 +52,6 @@ def new_user_check(uname, upass):
 def new_users_information_check(fname,lname,bday):
 
     date = datetime.datetime.now()
-
-    print(bday[8:10])
 
     if fname == "":
         return "Write your name"
@@ -127,7 +129,7 @@ def register():
 
         #Goes to function which checks if username and password were put right
         
-        texto_register = new_user_check(request.form["runame"],request.form["rupass"])
+        texto_register = new_user_check(request.form["runame"],request.form["rupass"], request.form["rupass2"])
 
         if texto_register == 1:
 
@@ -144,9 +146,13 @@ def register():
 
 @app.route("/main_page", methods = ["POST", "GET"])
 
+
+
+
 def main_page():
 
     return render_template("main_page.html",texto = session["user"])
+
 
 
 
@@ -156,9 +162,6 @@ def get_information():
     texten = ""
 
     if request.method == "POST":
-
-        #print(request.form["name"],request.form["lname"],request.form["birthday"],request.form["gender"])
-        #print(type(request.form["name"]),type(request.form["lname"]),type(request.form["birthday"]),type(request.form["gender"]))
 
         chekced_info = new_users_information_check(request.form["name"],request.form["lname"],request.form["birthday"])
 

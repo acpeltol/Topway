@@ -1,13 +1,42 @@
-body {
-    margin: 0;
+#heading {
+    background-color: rgb(73, 73, 204);
+    margin-bottom: 2%;
 }
 
-.header h1{
-    color: rgb(234, 0, 255);
-    margin-left: 25;
+a {
+    color: black;
 }
 
-.header {
-    background-color: rgb(5, 38, 82);
-    height: 50px;
+.header .navbar-brand{
+    margin-left: 2%;
+    margin-right: 5%;
+
+    font-size: 40px;
+
+    color: aliceblue;
+
+    font-family: 'Courier New', Courier, monospace;
 }
+
+.header .navbar-brand:hover{
+    margin-left: 2%;
+    margin-right: 5%;
+
+    font-size: 40px;
+
+    color: aliceblue;
+
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/**  Css for basic page **/
+
+
+#userpass p {
+    margin-bottom: 3%;
+    margin-top: 4%;
+}
+
+
+/** CSS for register page **/
+
