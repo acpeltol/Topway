@@ -144,17 +144,6 @@ def register():
 
     return render_template("register_page.html", texto_register = texto_register)
 
-@app.route("/main_page", methods = ["POST", "GET"])
-
-
-
-
-def main_page():
-
-    return render_template("main_page.html",texto = session["user"])
-
-
-
 
 @app.route("/get_information", methods = ["POST", "GET"])
 def get_information():
@@ -175,3 +164,30 @@ def get_information():
             return render_template("main_page.html",texto = session["user"])
 
     return render_template("get_information.html", fail_reason = texten)
+
+@app.route("/main_page", methods = ["POST", "GET"])
+
+def main_page():
+    return render_template("main_page.html", texto = session["user"])
+
+
+@app.route("/friends", methods = ["POST", "GET"])
+def friends():
+
+        friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}' ''')).fetchall()
+        
+        request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
+                                   WHERE to_name = '{session["user"]}' ''')).fetchall()
+        
+        return render_template("friends.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list)
+
+@app.route("/profile", methods = ["POST", "GET"])
+
+def profile():
+    return render_template("profile.html")
+
+@app.route("/messages", methods = ["POST", "GET"])
+
+def messages():
+    return render_template("messages.html")
