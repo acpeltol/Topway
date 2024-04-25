@@ -7,6 +7,10 @@ a {
     color: black;
 }
 
+.header a:hover{
+    color: aliceblue;
+}
+
 .header .navbar-brand{
     margin-left: 2%;
     margin-right: 5%;
@@ -39,4 +43,50 @@ a {
 
 
 /** CSS for register page **/
+
+/** CSS for friends page **/
+
+#friend_list{
+    margin-bottom: 5%;
+}
+
+#friend_list a{
+    margin-bottom: 3%;
+    font-size: 30px;
+}
+
+#friend_list a:hover{
+    margin-bottom: 3%;
+
+    text-decoration: None;
+
+    font-size: 30px;
+
+    color:  rgb(0, 0, 252);
+}
+
+
+#request_list a{
+    margin-bottom: 3%;
+    font-size: 30px;
+}
+
+#request_list a:hover{
+    margin-bottom: 3%;
+
+    text-decoration: None;
+
+    font-size: 30px;
+
+    color:  rgb(0, 0, 252);
+}
+
+
+#find_name {
+    margin-top: 3%;
+    width: 30%;
+
+    margin-right: 1%;
+
+}
 

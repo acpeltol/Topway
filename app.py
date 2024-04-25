@@ -170,24 +170,133 @@ def get_information():
 def main_page():
     return render_template("main_page.html", texto = session["user"])
 
+# Friends page functions
 
 @app.route("/friends", methods = ["POST", "GET"])
 def friends():
 
         friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
-                                   WHERE user_name = '{session["user"]}' ''')).fetchall()
+                                   WHERE user_name = '{session["user"]}' AND visible = True''')).fetchall()
         
         request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
-                                   WHERE to_name = '{session["user"]}' ''')).fetchall()
-        
+                                   WHERE to_name = '{session["user"]}' AND visible = True''')).fetchall()
+
+        #request_list = ["fs","sf","th", "kaet"]
+
         return render_template("friends.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list)
 
-@app.route("/profile", methods = ["POST", "GET"])
 
+@app.route("/friends_find", methods = ["POST"])
+def friends_find():
+        
+        
+        friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}' AND visible = True''')).fetchall()
+        
+        request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
+                                   WHERE to_name = '{session["user"]}' AND visible = True''')).fetchall()
+
+        #request_list = ["fs","sf","th", "kaet"]
+
+        found_friend = db.session.execute(text(f'''SELECT uname FROM users
+                                   WHERE uname = '{request.form["find_name"]}' ''')).fetchall()
+        
+        if len(found_friend) != 1:
+
+            return render_template("friends.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list, user_not_found = "This user doesn't exist")
+        
+        else:
+
+            return render_template("friends_get.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list, found_friend = found_friend)
+
+
+@app.route("/friend_request", methods = ["POST"])
+def friend_request():
+
+    check = db.session.execute(text(f'''SELECT * FROM friend_request
+                                   WHERE from_name = '{session["user"]}' AND to_name = '{request.form["friend_request_info"]}' AND visible = True''')).fetchall()
+    
+    check2 = db.session.execute(text(f'''SELECT * FROM friends
+                                   WHERE user_name = '{session["user"]}' AND friend_name = '{request.form["friend_request_info"]}' AND visible = True''')).fetchall()
+
+    if len(check) == 0 and len(check2) == 0 and session["user"] != request.form["friend_request_info"]:
+
+        db.session.execute(text(f'''INSERT INTO friend_request (from_name, to_name) VALUES ('{session["user"]}', '{request.form["friend_request_info"]}')'''))
+        db.session.commit()
+
+    return friends()
+
+@app.route("/friend_request_accept", methods = ["POST"])
+def friend_request_accept():
+    
+    request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
+                                   WHERE to_name = '{session["user"]}'  AND visible = True''')).fetchall()
+    
+
+    for i in range(len(request_list)):
+
+        print(request_list[i][0])
+        try:
+
+            #print(request_list[i][0])
+            kate = request.form[request_list[i][0]]
+
+            db.session.execute(text(f'''UPDATE friend_request SET visible=FALSE WHERE to_name = '{session["user"]}' AND from_name = '{request_list[i][0]}' '''))
+            db.session.commit()
+
+            db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{session["user"]}', '{request_list[i][0]}')'''))
+            db.session.commit()
+
+            db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{request_list[i][0]}', '{session["user"]}')'''))
+            db.session.commit()
+
+            break
+        except:
+
+            print("Nein")
+
+            pass
+
+
+    return friends()
+
+@app.route("/friend_request_decline", methods = ["POST"])
+def friend_request_decline():
+    
+    request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
+                                   WHERE to_name = '{session["user"]}' AND visible = True''')).fetchall()
+    
+
+    for i in range(len(request_list)):
+
+        print(request_list[i][0])
+        try:
+
+            print(type(request.form[request_list[i][0] + "_pita"]))
+
+            print(request_list[i][0])
+            #kate = request.form[request_list[i][0]]
+
+            db.session.execute(text(f'''UPDATE friend_request SET visible=FALSE WHERE to_name = '{session["user"]}' AND from_name = '{request_list[i][0]}' '''))
+            db.session.commit()
+
+            break
+
+        except:
+
+            print("nope")
+
+            pass
+
+
+    return friends()
+
+# Profile pages
+
+@app.route("/profile", methods = ["POST", "GET"])
 def profile():
     return render_template("profile.html")
 
 @app.route("/messages", methods = ["POST", "GET"])
-
 def messages():
     return render_template("messages.html")

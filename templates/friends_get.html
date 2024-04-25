@@ -60,7 +60,6 @@
 
             <a href="#">{{request_list[i][0]}}</a>
 
-
             <form action="/friend_request_accept" method="POST"> 
 
               <input type="hidden" id={{request_list[i][0]}} name={{request_list[i][0]}} value=True>
@@ -97,9 +96,19 @@
           
         </div>
 
-        <div class="row">
+        <div class="row" id="friend_list">
           <div class="col-12">
-            <p style="color: red">{{user_not_found}}</p>
+
+            <form action="/friend_request" method="POST"> 
+              
+              <a href="#"> {{found_friend[0][0]}} </a>
+
+              <input type="hidden" id="friend_request_info" name="friend_request_info" value="{{ found_friend[0][0] }}">
+
+              <input type="submit" value="Send friend request">
+      
+            </form>
+
           </div>
           
         </div>
