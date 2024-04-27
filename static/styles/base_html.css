@@ -44,6 +44,8 @@ a {
 
 /** CSS for register page **/
 
+
+
 /** CSS for friends page **/
 
 #friend_list{
@@ -64,6 +66,22 @@ a {
 
     color:  rgb(0, 0, 252);
 }
+
+#friend_list input{
+    margin-top: 18%;
+    margin-left: 150%;
+}
+
+#friend_list #friend_request_submit{
+    margin-top: 3%;
+    margin-left: 2%;
+}
+
+#request_list input{
+    margin-top: 18%;
+    margin-left: 150%;
+}
+
 
 
 #request_list a{
@@ -88,5 +106,11 @@ a {
 
     margin-right: 1%;
 
+}
+
+/** CSS for message pages**/
+
+#messag {
+    
 }
 

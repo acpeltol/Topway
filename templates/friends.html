@@ -44,7 +44,22 @@
 
             {%for i in range(0,len)%}
 
+              <div class="row">
+
               <a href="#"> {{friend_list[i][0]}}</a>
+                
+
+              <form action="/friends_delete" method="POST"> 
+
+                <input type="hidden" id={{friend_list[i][0]}} name={{friend_list[i][0]}} value=True>
+  
+                <input type="submit" value="Delete">
+        
+              </form>
+
+
+            </div>
+
 
               <br>
                 
@@ -57,6 +72,8 @@
             <h1>Friend requests</h1>
 
             {%for i in range(0,len_request)%}
+
+            <div class="row">
 
             <a href="#">{{request_list[i][0]}}</a>
 
@@ -77,6 +94,8 @@
       
             </form>
 
+          </div>
+
             <br>
                 
             {%endfor%}
@@ -87,7 +106,7 @@
         <div class="row">
           <div class="col-12">
             <form action="/friends_find" method="POST"> 
-              <h2>Add Firend: </h2>
+              <h2>Find user: </h2>
               <input type="text" id="find_name" name="find_name">
 
               <input type="submit" value="Search">

@@ -78,6 +78,9 @@ def new_users_information_check(fname,lname,bday):
 
 #Opening page
 
+
+
+
 @app.route("/", methods = ["POST", "GET"])
 def index():
 
@@ -92,7 +95,7 @@ def index():
 
         if len(u_id) != 1:            
             
-            texto = "Username is wrong"
+            texto = "Username or password is wrong"
             return render_template("base.html", texto = texto)
     
         if check_password_hash(u_id[0][1], request.form["upass"]):
@@ -110,13 +113,17 @@ def index():
         
         else:
 
-            texto = "Password is wrong"
+            texto = "Username or password is wrong"
 
             return render_template("base.html", texto = texto)
 
     return render_template("base.html", texto = texto)
 
 # REGISRATION PAGE
+
+
+
+
 
 @app.route("/register", methods = ["POST", "GET"])
 def register():
@@ -145,6 +152,10 @@ def register():
     return render_template("register_page.html", texto_register = texto_register)
 
 
+
+
+
+
 @app.route("/get_information", methods = ["POST", "GET"])
 def get_information():
 
@@ -167,10 +178,18 @@ def get_information():
 
 @app.route("/main_page", methods = ["POST", "GET"])
 
+
+
+
+
+
 def main_page():
     return render_template("main_page.html", texto = session["user"])
 
 # Friends page functions
+
+
+
 
 @app.route("/friends", methods = ["POST", "GET"])
 def friends():
@@ -184,6 +203,42 @@ def friends():
         #request_list = ["fs","sf","th", "kaet"]
 
         return render_template("friends.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list)
+
+
+
+
+
+@app.route("/friends_delete", methods = ["POST", "GET"])
+def friends_delete():
+
+    friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}'  AND visible = True''')).fetchall()
+    
+
+    for i in range(len(friend_list)):
+
+        try:
+
+            #print(request_list[i][0])
+            kate = request.form[friend_list[i][0]]
+
+            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE user_name = '{session["user"]}' AND friend_name = '{friend_list[i][0]}' '''))
+
+            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE friend_name = '{session["user"]}' AND user_name = '{friend_list[i][0]}' '''))
+            
+            db.session.commit()
+
+            break
+        except:
+
+
+            pass
+
+
+    return friends()
+
+
+
 
 
 @app.route("/friends_find", methods = ["POST"])
@@ -210,6 +265,9 @@ def friends_find():
             return render_template("friends_get.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list, found_friend = found_friend)
 
 
+
+
+
 @app.route("/friend_request", methods = ["POST"])
 def friend_request():
 
@@ -221,10 +279,24 @@ def friend_request():
 
     if len(check) == 0 and len(check2) == 0 and session["user"] != request.form["friend_request_info"]:
 
-        db.session.execute(text(f'''INSERT INTO friend_request (from_name, to_name) VALUES ('{session["user"]}', '{request.form["friend_request_info"]}')'''))
-        db.session.commit()
+
+        check3 = db.session.execute(text(f'''SELECT * FROM friend_request
+                                   WHERE from_name = '{session["user"]}' AND to_name = '{request.form["friend_request_info"]}' AND visible = FALSE''')).fetchall()
+        
+        if len(check3) == 0:
+
+            db.session.execute(text(f'''INSERT INTO friend_request (from_name, to_name) VALUES ('{session["user"]}', '{request.form["friend_request_info"]}')'''))
+            db.session.commit()
+
+        else:
+            db.session.execute(text(f'''UPDATE friend_request SET visible=True WHERE to_name = '{request.form["friend_request_info"]}' AND from_name = '{session["user"]}' '''))
+            db.session.commit()
+
 
     return friends()
+
+
+
 
 @app.route("/friend_request_accept", methods = ["POST"])
 def friend_request_accept():
@@ -242,23 +314,34 @@ def friend_request_accept():
             kate = request.form[request_list[i][0]]
 
             db.session.execute(text(f'''UPDATE friend_request SET visible=FALSE WHERE to_name = '{session["user"]}' AND from_name = '{request_list[i][0]}' '''))
-            db.session.commit()
 
-            db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{session["user"]}', '{request_list[i][0]}')'''))
-            db.session.commit()
+            check = db.session.execute(text(f'''SELECT * FROM friends
+                                   WHERE user_name = '{session["user"]}' AND friend_name = '{request_list[i][0]}' AND visible = FALSE''')).fetchall()
 
-            db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{request_list[i][0]}', '{session["user"]}')'''))
+            if len(check) == 0:
+
+                db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{session["user"]}', '{request_list[i][0]}')'''))
+
+                db.session.execute(text(f'''INSERT INTO friends (user_name, friend_name) VALUES ('{request_list[i][0]}', '{session["user"]}')'''))
+
+            else:
+
+                db.session.execute(text(f'''UPDATE friends SET visible=True WHERE user_name = '{session["user"]}' AND friend_name = '{request_list[i][0]}' '''))
+
+                db.session.execute(text(f'''UPDATE friends SET visible=True WHERE friend_name = '{session["user"]}' AND user_name = '{request_list[i][0]}' '''))
+            
             db.session.commit()
 
             break
         except:
-
-            print("Nein")
-
             pass
 
 
     return friends()
+
+
+
+
 
 @app.route("/friend_request_decline", methods = ["POST"])
 def friend_request_decline():
@@ -297,6 +380,39 @@ def friend_request_decline():
 def profile():
     return render_template("profile.html")
 
+
+
+#Message pages
+
 @app.route("/messages", methods = ["POST", "GET"])
 def messages():
-    return render_template("messages.html")
+    return render_template("messages.html", len_recived = 0, len_sent = 0)
+
+
+@app.route("/send_message", methods = ["POST", "GET"])
+def send_message():
+    return render_template("send_message.html")
+
+@app.route("/send_check", methods = ["POST", "GET"])
+def send_check():
+    
+    to = request.form["to_user"]
+
+    mes = request.form["messag"]
+
+    date = datetime.datetime.now()
+
+    date = str(date)
+
+    check = db.session.execute(text(f'''SELECT * FROM users
+                                   WHERE uname = '{to}' ''')).fetchall()
+    
+    if len(check) == 0:
+        return render_template("send_message.html", wrong_user = "This user doesn't exist")
+
+    db.session.execute(text(f'''INSERT INTO messages (from_name, message, to_user, datetime)
+                                   VALUES ('{session["user"]}', '{mes}','{to}','{date}') '''))
+    db.session.commit()
+
+
+    return messages()
