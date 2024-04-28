@@ -40,13 +40,35 @@
           <div class="row">
           <div class="col-7" id="friend_list">
             
+            <div class="row">
+
             <h1>Friends</h1>
+
+            </div>
 
             {%for i in range(0,len)%}
 
-              <div class="row">
+            <div class="row">
+
+              <div class="col-3">
 
               <a href="#"> {{friend_list[i][0]}}</a>
+
+              </div>
+
+              <div class="col-2">
+
+              <form action="/friend_profile" method="POST"> 
+
+                <input type="hidden" id="{{friend_list[i][0]}}_profile" name="{{friend_list[i][0]}}_profile" value=True>
+  
+                <input type="submit" value="Profile">
+        
+              </form>
+
+              </div>
+
+              <div class="col-2">
                 
 
               <form action="/friends_delete" method="POST"> 
@@ -56,6 +78,8 @@
                 <input type="submit" value="Delete">
         
               </form>
+
+              </div>
 
 
             </div>
@@ -75,26 +99,36 @@
 
             <div class="row">
 
-            <a href="#">{{request_list[i][0]}}</a>
+              <div class="col-2">
 
+              <a href="#">{{request_list[i][0]}}</a>
 
-            <form action="/friend_request_accept" method="POST"> 
+              </div>
+              <div class="col-2">
 
-              <input type="hidden" id={{request_list[i][0]}} name={{request_list[i][0]}} value=True>
+              <form action="/friend_request_accept" method="POST"> 
 
-              <input type="submit" value="Accept">
+                <input type="hidden" id={{request_list[i][0]}} name={{request_list[i][0]}} value=True>
+
+                <input type="submit" value="Accept">
       
-            </form>
+              </form>
 
-            <form action="/friend_request_decline" method="POST"> 
+              </div>
 
-              <input type="hidden" id="{{request_list[i][0]}}_pita" name="{{request_list[i][0]}}_pita" value=False>
+              <div class="col-1">
 
-              <input type="submit" value="Decline">
+              <form action="/friend_request_decline" method="POST"> 
+
+                <input type="hidden" id="{{request_list[i][0]}}_pita" name="{{request_list[i][0]}}_pita" value=False>
+
+                <input type="submit" value="Decline">
       
-            </form>
+              </form>
 
-          </div>
+              </div>
+
+            </div>
 
             <br>
                 

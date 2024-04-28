@@ -367,8 +367,6 @@ def friend_request_decline():
 
         except:
 
-            print("nope")
-
             pass
 
 
@@ -378,7 +376,46 @@ def friend_request_decline():
 
 @app.route("/profile", methods = ["POST", "GET"])
 def profile():
-    return render_template("profile.html")
+
+    user = db.session.execute(text(f'''SELECT * FROM users_information
+                                        WHERE user_name = '{session["user"]}' ''')).fetchall()
+
+    return render_template("profile.html", user = user[0][0], first_name = user[0][3], last_name = user[0][4], Birtday = user[0][1], Sex = user[0][2])
+
+
+@app.route("/friend_profile", methods = ["POST", "GET"])
+def friend_profile():
+
+    fito = None
+
+    friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}'  AND visible = True''')).fetchall()
+    
+
+    for i in range(len(friend_list)):
+
+        try:
+
+            #print(request_list[i][0])
+            kate = request.form[friend_list[i][0]+"_profile"]
+
+
+
+            fito = friend_list[i][0]
+
+            
+            break
+        except:
+
+            print("Nein")
+
+            pass
+
+    user = db.session.execute(text(f'''SELECT * FROM users_information
+                                   WHERE user_name = '{fito}' ''')).fetchall()
+
+    return render_template("profile.html", user = user[0][0], first_name = user[0][3], last_name = user[0][4], Birtday = user[0][1], Sex = user[0][2])
+
 
 
 
@@ -386,7 +423,14 @@ def profile():
 
 @app.route("/messages", methods = ["POST", "GET"])
 def messages():
-    return render_template("messages.html", len_recived = 0, len_sent = 0)
+
+    recived_list = db.session.execute(text(f'''SELECT * FROM messages
+                                   WHERE to_user = '{session["user"]}' ORDER BY id DESC''')).fetchall()
+    
+    #send_list = db.session.execute(text(f'''SELECT * FROM messages
+    #                               WHERE from_name = '{session["user"]}' ''')).fetchall()
+
+    return render_template("messages.html", len_recived = len(recived_list), recived_list = recived_list)
 
 
 @app.route("/send_message", methods = ["POST", "GET"])
@@ -416,3 +460,15 @@ def send_check():
 
 
     return messages()
+
+
+@app.route("/sent_messages", methods = ["POST", "GET"])
+def sent_messages():
+
+    #recived_list = db.session.execute(text(f'''SELECT * FROM messages
+    #                               WHERE to_user = '{session["user"]}' ''')).fetchall()
+    
+    sent_list = db.session.execute(text(f'''SELECT * FROM messages
+                                   WHERE from_name = '{session["user"]}' ORDER BY id DESC''')).fetchall()
+
+    return render_template("sent_messages.html", len_sent = len(sent_list), sent_list = sent_list)

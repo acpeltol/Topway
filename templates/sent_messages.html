@@ -26,7 +26,7 @@
                 <a class="nav-link" href="/friends">Friends</a>
               </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Messages</a>
+              <a class="nav-link" href="/messages">Messages</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/profile">Profile</a>
@@ -37,37 +37,37 @@
     </div>
         <div class="container">
 
-          <div class="row" id="message_top">
+            <div class="row" id="message_top">
 
-            <div class="col-8">
-
-            <a href="/send_message">Send message</a>
-
+                <div class="col-8">
+    
+                <a href="/send_message">Send message</a>
+    
+                </div>
+    
+                <div class="col-4">
+    
+                  <a href="/messages">Recived messages</a>
+      
+                  </div>
             </div>
-
-            <div class="col-4">
-
-              <a href="/sent_messages">Messages sent</a>
-  
-              </div>
-          </div>
 
 
           <div class="row">
 
-              <div class="col-12">
-
+            <div class="col-12">
+                
                 <div class="row">
 
-                  <h1>Recived messages</h1>
-
+                    <h1>Messages sent</h1>
+    
                 </div>
-
+    
 
                 <div class="row">
 
                   <div class="col-4">
-                     <h3> FROM: </h3>
+                     <h3> To: </h3>
                   </div>
 
                  <div class="col-6">
@@ -77,38 +77,36 @@
                  <div class="col-2">
                    <h3> Date: </h3>
                  </div>
+                </div>
 
 
 
-               </div>
-                
-                
-                {%for i in range(0,len_recived)%}
+                {%for i in range(0,len_sent)%}
+
                 <div class="row" id="message_icon">
 
-                   <div class="col-4">
-                      <h2> {{recived_list[i][1]}} </h2>
+                    <div class="col-4">
+                       <h2> {{sent_list[i][3]}} </h2>
+                    </div>
+ 
+                   <div class="col-6">
+                     <p>{{sent_list[i][2]}}</p>
                    </div>
-
-                  <div class="col-6">
-                    <p>{{recived_list[i][2]}}</p>
-                  </div>
-
-                  <div class="col-2">
-                    <p> {{recived_list[i][4]}} </p>
-                  </div>
-
-
-
-                </div>
+ 
+                   <div class="col-2">
+                     <p> {{sent_list[i][4]}} </p>
+                   </div>
+ 
+ 
+ 
+                 </div>
 
                 <br>
                 
                 {%endfor%}
 
-                
-
               </div>
+
 
           </div>
         </div>

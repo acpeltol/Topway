@@ -67,19 +67,10 @@ a {
     color:  rgb(0, 0, 252);
 }
 
-#friend_list input{
-    margin-top: 18%;
-    margin-left: 150%;
-}
 
 #friend_list #friend_request_submit{
     margin-top: 3%;
     margin-left: 2%;
-}
-
-#request_list input{
-    margin-top: 18%;
-    margin-left: 150%;
 }
 
 
@@ -110,7 +101,48 @@ a {
 
 /** CSS for message pages**/
 
-#messag {
+#message_icon {
+
+    border-style: groove;
+
+    margin-top: 2%;
+
+    padding-top: 2%;
     
 }
+
+#message_top {
+    margin-bottom: 2%;
+}
+
+
+#message_top a:hover{
+
+    text-decoration: None;
+
+    color:  rgb(0, 0, 252);
+}
+
+
+/** Css for profile pages **/
+
+
+#profile #user{
+    padding-bottom: 3%;
+
+    border-bottom: 2px solid black;
+
+}
+
+#profile .row{
+    margin-bottom: 2%;
+}
+
+
+/** Css for main page**/
+
+#toptext h1{
+    margin-bottom: 5%;
+}
+
 
