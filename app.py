@@ -4,12 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
 import datetime
+from os import getenv
+import secrets
 
 app = Flask(__name__)
 
-app.secret_key = "Alejandro"
+app.secret_key = getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///acpeltol"
 db = SQLAlchemy(app)
 
 # Functions which checsk parameters and lead to right pages
@@ -27,16 +29,6 @@ def new_user_check(uname, upass, upass2):
     
     if uname == "" or upass == "":
         return "Wrog type of name or password"
-    
-    # If password has not uppercase letters then it rejects password
-
-    if upass == upass.lower():
-        return "Password must have at least one capital letter"
-    
-    # If password is too short it rejects password
-
-    if len(upass) < 8:
-        return "Your password must be at least 8 charecters long"
     
     # If username alredy exists it rejects username
 
@@ -103,6 +95,8 @@ def index():
             user = request.form["uname"]
             session["user"] = user
 
+            session["csrf_token"] = secrets.token_hex(16)
+
             u_id = db.session.execute(text(f'''  
                     SELECT * FROM users_information WHERE user_name = '{session["user"]}' ''')).fetchall()
             
@@ -119,10 +113,9 @@ def index():
 
     return render_template("base.html", texto = texto)
 
+
+
 # REGISRATION PAGE
-
-
-
 
 
 @app.route("/register", methods = ["POST", "GET"])
@@ -185,6 +178,9 @@ def get_information():
 
 def main_page():
     return render_template("main_page.html", texto = session["user"])
+
+
+
 
 # Friends page functions
 
@@ -372,7 +368,13 @@ def friend_request_decline():
 
     return friends()
 
+
+
+
 # Profile pages
+
+
+
 
 @app.route("/profile", methods = ["POST", "GET"])
 def profile():
@@ -421,6 +423,8 @@ def friend_profile():
 
 #Message pages
 
+
+
 @app.route("/messages", methods = ["POST", "GET"])
 def messages():
 
@@ -435,7 +439,15 @@ def messages():
 
 @app.route("/send_message", methods = ["POST", "GET"])
 def send_message():
-    return render_template("send_message.html")
+
+
+    friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}' AND visible = True''')).fetchall()
+
+
+    return render_template("send_message.html", len = len(friend_list), friend_list = friend_list)
+
+
 
 @app.route("/send_check", methods = ["POST", "GET"])
 def send_check():
@@ -452,7 +464,11 @@ def send_check():
                                    WHERE uname = '{to}' ''')).fetchall()
     
     if len(check) == 0:
-        return render_template("send_message.html", wrong_user = "This user doesn't exist")
+
+        friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
+                                   WHERE user_name = '{session["user"]}' AND visible = True''')).fetchall()
+
+        return render_template("send_message.html", wrong_user = "This user doesn't exist", len = len(friend_list), friend_list = friend_list)
 
     db.session.execute(text(f'''INSERT INTO messages (from_name, message, to_user, datetime)
                                    VALUES ('{session["user"]}', '{mes}','{to}','{date}') '''))
@@ -464,11 +480,18 @@ def send_check():
 
 @app.route("/sent_messages", methods = ["POST", "GET"])
 def sent_messages():
-
-    #recived_list = db.session.execute(text(f'''SELECT * FROM messages
-    #                               WHERE to_user = '{session["user"]}' ''')).fetchall()
     
     sent_list = db.session.execute(text(f'''SELECT * FROM messages
                                    WHERE from_name = '{session["user"]}' ORDER BY id DESC''')).fetchall()
 
     return render_template("sent_messages.html", len_sent = len(sent_list), sent_list = sent_list)
+
+
+
+# Log out
+
+
+@app.route("/logout")
+def logout():
+    del session["user"]
+    return index()

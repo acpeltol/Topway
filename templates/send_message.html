@@ -31,13 +31,16 @@
             <li class="nav-item">
               <a class="nav-link" href="/profile">Profile</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Log out</a>
+            </li>
           </ul>
         </nav>
 
     </div>
         <div class="container">
           <div class="row">
-
+            <div class="col-6">
             <form action="/send_check" method="POST">
               <p>To:</p>
 
@@ -50,7 +53,7 @@
 
               <p>Message:</p>
 
-              <textarea type="text" id="messag" name="messag" cols="50" rows="4">
+              <textarea type="text" id="messag" name="messag" cols="50" rows="4" value=" ">
 
 
               </textarea> 
@@ -62,6 +65,32 @@
               <input type="submit" value="Send">
 
             </form>
+
+          </div>
+
+          <div class="col-6">
+
+            <div class="row" id="send_message_friend">
+
+              <h1>Friends</h1>
+  
+              </div>
+  
+              {%for i in range(0,len)%}
+  
+              <div class="row">
+  
+                <h2 id="friend"> {{friend_list[i][0]}}</h2>
+  
+              </div>
+  
+                <br>
+                  
+              {%endfor%}
+  
+            </div>
+          </div>
+
 
 
           </div>

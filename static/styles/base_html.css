@@ -123,6 +123,10 @@ a {
     color:  rgb(0, 0, 252);
 }
 
+#send_message_friend #friend{
+    margin-left: 20%;
+}
+
 
 /** Css for profile pages **/
 
