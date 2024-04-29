@@ -77,7 +77,9 @@
               <form action="/friends_delete" method="POST"> 
 
                 <input type="hidden" id={{friend_list[i][0]}} name={{friend_list[i][0]}} value=True>
-  
+
+                <input type="hidden" id="{{friend_list[i][0]}}_c_delete" name="{{friend_list[i][0]}}_c_delete" value={{session.csrf_token}}>
+
                 <input type="submit" value="Delete">
         
               </form>
@@ -113,6 +115,8 @@
 
                 <input type="hidden" id={{request_list[i][0]}} name={{request_list[i][0]}} value=True>
 
+                <input type="hidden" id="{{request_list[i][0]}}_c_accept" name="{{request_list[i][0]}}_c_accept" value={{session.csrf_token}}>
+
                 <input type="submit" value="Accept">
       
               </form>
@@ -124,6 +128,8 @@
               <form action="/friend_request_decline" method="POST"> 
 
                 <input type="hidden" id="{{request_list[i][0]}}_pita" name="{{request_list[i][0]}}_pita" value=False>
+
+                <input type="hidden" id="{{request_list[i][0]}}_c_decline" name="{{request_list[i][0]}}_c_decline" value={{session.csrf_token}}>
 
                 <input type="submit" value="Decline">
       
@@ -161,6 +167,8 @@
               <a href="#"> {{found_friend[0][0]}} </a>
 
               <input type="hidden" id="friend_request_info" name="friend_request_info" value="{{ found_friend[0][0] }}">
+
+              <input type="hidden" id="friend_request_c" name="friend_request_c" value={{session.csrf_token}}>
 
               <input type="submit" value="Send friend request" id="friend_request_submit">
       

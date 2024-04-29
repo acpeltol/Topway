@@ -97,6 +97,8 @@ def index():
 
             session["csrf_token"] = secrets.token_hex(16)
 
+
+
             u_id = db.session.execute(text(f'''  
                     SELECT * FROM users_information WHERE user_name = '{session["user"]}' ''')).fetchall()
             
@@ -133,7 +135,8 @@ def register():
 
         if texto_register == 1:
 
-            db.session.execute(text(f'''INSERT INTO users (uname, upass) VALUES ('{request.form["runame"]}', '{generate_password_hash(request.form["rupass"])}')'''))
+            db.session.execute(text(f'''INSERT INTO users (uname, upass) VALUES 
+                                    ('{request.form["runame"]}', '{generate_password_hash(request.form["rupass"])}')'''))
             db.session.commit()
 
             user = request.form["runame"]
@@ -145,7 +148,7 @@ def register():
     return render_template("register_page.html", texto_register = texto_register)
 
 
-
+# Get information page
 
 
 
@@ -162,7 +165,8 @@ def get_information():
             texten = chekced_info
         else:
 
-            db.session.execute(text(f'''INSERT INTO users_information (user_name, birthday, gender, first_name, last_name) VALUES ('{session["user"]}', '{request.form["birthday"]}','{request.form["gender"]}','{request.form["name"]}','{request.form["lname"]}')'''))
+            db.session.execute(text(f'''INSERT INTO users_information (user_name, birthday, gender, first_name, last_name) 
+                                    VALUES ('{session["user"]}', '{request.form["birthday"]}','{request.form["gender"]}','{request.form["name"]}','{request.form["lname"]}')'''))
             db.session.commit()
 
             return render_template("main_page.html",texto = session["user"])
@@ -173,7 +177,7 @@ def get_information():
 
 
 
-
+# Main page
 
 
 def main_page():
@@ -196,9 +200,7 @@ def friends():
         request_list = db.session.execute(text(f'''SELECT from_name FROM friend_request
                                    WHERE to_name = '{session["user"]}' AND visible = True''')).fetchall()
 
-        #request_list = ["fs","sf","th", "kaet"]
-
-        return render_template("friends.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list)
+        return render_template("friends.html", len = len(friend_list), friend_list = friend_list, len_request = len(request_list), request_list = request_list)
 
 
 
@@ -218,9 +220,14 @@ def friends_delete():
             #print(request_list[i][0])
             kate = request.form[friend_list[i][0]]
 
-            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE user_name = '{session["user"]}' AND friend_name = '{friend_list[i][0]}' '''))
+            if session["csrf_token"] != request.form[friend_list[i][0]+"_c_delete"]:
+                abort(403)
 
-            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE friend_name = '{session["user"]}' AND user_name = '{friend_list[i][0]}' '''))
+            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE user_name = 
+                                    '{session["user"]}' AND friend_name = '{friend_list[i][0]}' '''))
+
+            db.session.execute(text(f'''UPDATE friends SET visible=FALSE WHERE friend_name =
+                                     '{session["user"]}' AND user_name = '{friend_list[i][0]}' '''))
             
             db.session.commit()
 
@@ -267,6 +274,10 @@ def friends_find():
 @app.route("/friend_request", methods = ["POST"])
 def friend_request():
 
+    if session["csrf_token"] != request.form["friend_request_c"]:
+        abort(403)
+        #print("hey")
+
     check = db.session.execute(text(f'''SELECT * FROM friend_request
                                    WHERE from_name = '{session["user"]}' AND to_name = '{request.form["friend_request_info"]}' AND visible = True''')).fetchall()
     
@@ -274,7 +285,6 @@ def friend_request():
                                    WHERE user_name = '{session["user"]}' AND friend_name = '{request.form["friend_request_info"]}' AND visible = True''')).fetchall()
 
     if len(check) == 0 and len(check2) == 0 and session["user"] != request.form["friend_request_info"]:
-
 
         check3 = db.session.execute(text(f'''SELECT * FROM friend_request
                                    WHERE from_name = '{session["user"]}' AND to_name = '{request.form["friend_request_info"]}' AND visible = FALSE''')).fetchall()
@@ -303,11 +313,14 @@ def friend_request_accept():
 
     for i in range(len(request_list)):
 
-        print(request_list[i][0])
         try:
 
-            #print(request_list[i][0])
             kate = request.form[request_list[i][0]]
+
+            if session["csrf_token"] != request.form[request_list[i][0]+"_c_accept"]:
+                abort(403)
+
+
 
             db.session.execute(text(f'''UPDATE friend_request SET visible=FALSE WHERE to_name = '{session["user"]}' AND from_name = '{request_list[i][0]}' '''))
 
@@ -348,13 +361,13 @@ def friend_request_decline():
 
     for i in range(len(request_list)):
 
-        print(request_list[i][0])
         try:
 
-            print(type(request.form[request_list[i][0] + "_pita"]))
+            type = request.form[request_list[i][0] + "_pita"]
 
-            print(request_list[i][0])
-            #kate = request.form[request_list[i][0]]
+            if session["csrf_token"] != request.form[request_list[i][0]+"_c_decline"]:
+                abort(403)
+
 
             db.session.execute(text(f'''UPDATE friend_request SET visible=FALSE WHERE to_name = '{session["user"]}' AND from_name = '{request_list[i][0]}' '''))
             db.session.commit()
@@ -398,10 +411,7 @@ def friend_profile():
 
         try:
 
-            #print(request_list[i][0])
             kate = request.form[friend_list[i][0]+"_profile"]
-
-
 
             fito = friend_list[i][0]
 
@@ -430,9 +440,6 @@ def messages():
 
     recived_list = db.session.execute(text(f'''SELECT * FROM messages
                                    WHERE to_user = '{session["user"]}' ORDER BY id DESC''')).fetchall()
-    
-    #send_list = db.session.execute(text(f'''SELECT * FROM messages
-    #                               WHERE from_name = '{session["user"]}' ''')).fetchall()
 
     return render_template("messages.html", len_recived = len(recived_list), recived_list = recived_list)
 
@@ -444,6 +451,7 @@ def send_message():
     friend_list = db.session.execute(text(f'''SELECT friend_name FROM friends
                                    WHERE user_name = '{session["user"]}' AND visible = True''')).fetchall()
 
+    #csrf = session["csrf_token"]
 
     return render_template("send_message.html", len = len(friend_list), friend_list = friend_list)
 
@@ -451,6 +459,12 @@ def send_message():
 
 @app.route("/send_check", methods = ["POST", "GET"])
 def send_check():
+
+
+    if session["csrf_token"] != request.form["message_c"]:
+        abort(403)
+
+
     
     to = request.form["to_user"]
 
