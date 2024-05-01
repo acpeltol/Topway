@@ -14,63 +14,21 @@ app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 
 db = SQLAlchemy(app)
 
-# Functions which checsk parameters and lead to right pages
-
-# Checks if new users username exists and if it has correct type password
-
-def new_user_check(uname, upass, upass2):
-
-    # If user didn't put both passwords right then it will inform about it
-
-    if upass != upass2:
-        return "You didn't reapeat your password right"
-
-    # If user types nothing then it rejects sign up
-    
-    if uname == "" or upass == "":
-        return "Wrog type of name or password"
-    
-    # If username alredy exists it rejects username
-
-    u_id = db.session.execute(text(f'''SELECT id FROM users WHERE uname = '{uname}' ''')).fetchall()
-
-    if len(u_id) == 1:        
-        return "Username alredy exists"
-
-    return 1
-
-# Checks if new user's information was put right
-
-def new_users_information_check(fname,lname,bday):
-
-    date = datetime.datetime.now()
-
-    if fname == "":
-        return "Write your name"
-    
-    if lname == "":
-        return "Write your lastname"
-    
-    if bday == "":
-        return "Please give us your birthday"
-    
-    if int(bday[0:4]) > date.year:
-        return "This year hasn't comen yet"
-    
-    if int(bday[0:4]) == date.year and int(bday[5:7]) > date.month:
-        return "This month of this year hasn't commen yet"
-    
-    if int(bday[0:4]) == date.year and int(bday[5:7]) == date.month and int(bday[8:10]) > date.day:
-        return "This day of this month hasn't commen yet"
-
-    return 1
-
 
 #Routes to different pages
+
+
+
+#####################
+
 
 #Opening page
 
 
+#######################
+
+
+# Log in page
 
 
 @app.route("/", methods = ["POST", "GET"])
@@ -117,7 +75,47 @@ def index():
 
 
 
+########################################
+
+
+
+
+
 # REGISRATION PAGE
+
+
+
+
+#####################
+
+
+
+
+# Checks if new users username exists and if it has correct type password
+
+def new_user_check(uname, upass, upass2):
+
+    # If user didn't put both passwords right then it will inform about it
+
+    if upass != upass2:
+        return "You didn't reapeat your password right"
+
+    # If user types nothing then it rejects sign up
+    
+    if uname == "" or upass == "":
+        return "Wrog type of name or password"
+    
+    # If username alredy exists it rejects username
+
+    u_id = db.session.execute(text(f'''SELECT id FROM users WHERE uname = '{uname}' ''')).fetchall()
+
+    if len(u_id) == 1:        
+        return "Username alredy exists"
+
+    return 1
+
+
+# Function which leads to registration page
 
 
 @app.route("/register", methods = ["POST", "GET"])
@@ -148,8 +146,54 @@ def register():
     return render_template("register_page.html", texto_register = texto_register)
 
 
+
+
+################################
+
+
+
+
+
 # Get information page
 
+
+
+
+
+
+################################
+
+
+
+
+# Checks if new user's information was put right
+
+def new_users_information_check(fname,lname,bday):
+
+    date = datetime.datetime.now()
+
+    if fname == "":
+        return "Write your name"
+    
+    if lname == "":
+        return "Write your lastname"
+    
+    if bday == "":
+        return "Please give us your birthday"
+    
+    if int(bday[0:4]) > date.year:
+        return "This year hasn't comen yet"
+    
+    if int(bday[0:4]) == date.year and int(bday[5:7]) > date.month:
+        return "This month of this year hasn't commen yet"
+    
+    if int(bday[0:4]) == date.year and int(bday[5:7]) == date.month and int(bday[8:10]) > date.day:
+        return "This day of this month hasn't commen yet"
+
+    return 1
+
+
+# Functions which leads to get_information page
 
 
 @app.route("/get_information", methods = ["POST", "GET"])
@@ -175,21 +219,34 @@ def get_information():
 
 @app.route("/main_page", methods = ["POST", "GET"])
 
+###########################
+
 
 
 # Main page
 
 
+
+#########################
+
+
+# function which leads to main page
+
 def main_page():
     return render_template("main_page.html", texto = session["user"])
 
+
+########################
 
 
 
 # Friends page functions
 
 
+########################
 
+
+# Function to friends page
 
 @app.route("/friends", methods = ["POST", "GET"])
 def friends():
@@ -203,7 +260,7 @@ def friends():
         return render_template("friends.html", len = len(friend_list), friend_list = friend_list, len_request = len(request_list), request_list = request_list)
 
 
-
+# Function which deletes a friend
 
 
 @app.route("/friends_delete", methods = ["POST", "GET"])
@@ -241,7 +298,7 @@ def friends_delete():
     return friends()
 
 
-
+# Page which shows searched user and fiend request button
 
 
 @app.route("/friends_find", methods = ["POST"])
@@ -268,7 +325,7 @@ def friends_find():
             return render_template("friends_get.html", len = len(friend_list), friend_list= friend_list, len_request = len(request_list), request_list = request_list, found_friend = found_friend)
 
 
-
+# Function which sends friend request
 
 
 @app.route("/friend_request", methods = ["POST"])
@@ -302,6 +359,7 @@ def friend_request():
     return friends()
 
 
+# Function which accepts othe user's friend request
 
 
 @app.route("/friend_request_accept", methods = ["POST"])
@@ -349,7 +407,7 @@ def friend_request_accept():
     return friends()
 
 
-
+# Function which declines othe user's friend request
 
 
 @app.route("/friend_request_decline", methods = ["POST"])
@@ -382,10 +440,20 @@ def friend_request_decline():
     return friends()
 
 
+###########################
+
+
 
 
 # Profile pages
 
+
+
+###################
+
+
+
+#Page for profile
 
 
 
@@ -396,6 +464,9 @@ def profile():
                                         WHERE user_name = '{session["user"]}' ''')).fetchall()
 
     return render_template("profile.html", user = user[0][0], first_name = user[0][3], last_name = user[0][4], Birtday = user[0][1], Sex = user[0][2])
+
+
+# Function that show orfile of a friend
 
 
 @app.route("/friend_profile", methods = ["POST", "GET"])
@@ -418,9 +489,6 @@ def friend_profile():
             
             break
         except:
-
-            print("Nein")
-
             pass
 
     user = db.session.execute(text(f'''SELECT * FROM users_information
@@ -430,10 +498,20 @@ def friend_profile():
 
 
 
+####################
+
+
+
+
 
 #Message pages
 
 
+
+#####################
+
+
+# Main message paig
 
 @app.route("/messages", methods = ["POST", "GET"])
 def messages():
@@ -442,6 +520,9 @@ def messages():
                                    WHERE to_user = '{session["user"]}' ORDER BY id DESC''')).fetchall()
 
     return render_template("messages.html", len_recived = len(recived_list), recived_list = recived_list)
+
+
+# Page for sending messages
 
 
 @app.route("/send_message", methods = ["POST", "GET"])
@@ -455,6 +536,8 @@ def send_message():
 
     return render_template("send_message.html", len = len(friend_list), friend_list = friend_list)
 
+
+# Function to check user's message
 
 
 @app.route("/send_check", methods = ["POST", "GET"])
@@ -492,6 +575,13 @@ def send_check():
     return messages()
 
 
+
+
+#Page to see all messages that were sent
+
+
+
+
 @app.route("/sent_messages", methods = ["POST", "GET"])
 def sent_messages():
     
@@ -500,10 +590,23 @@ def sent_messages():
 
     return render_template("sent_messages.html", len_sent = len(sent_list), sent_list = sent_list)
 
+##############
 
 
-# Log out
 
+
+
+
+# Logout
+
+
+
+
+
+###############
+
+
+# Logout page
 
 @app.route("/logout")
 def logout():

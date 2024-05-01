@@ -7,6 +7,11 @@ Kun olet luonut tilisi, voit lisätä ystäviä firends-sivun kautta. Siellä n�
 
 - Käyttäjä voi luoda tunnuksen ja kirjautua sisään sovellukseen
 - Sovellus ilmoittaa käyttäjälle virheellisistä syötteistä
+- Käyttäjä voi kirjoittaa lisätä tietoa itsestään
+- Käyttäjä voi lähettää kaveripyyntöjä.
+- Käyttäjä voi hyväksyä tai hylkää kaveri pyynnön, sekä poistaa lisätyn kaverin.
+- Käyttäjä voi nähdä kaverin profiilin.
+- Käyttäjä voi lähettää kaikille viestejä sekä vastaanottaa niitä.
 
 # Käynnistysohjeet (lokaalisesti)
 
